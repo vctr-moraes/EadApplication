@@ -1,7 +1,9 @@
 package com.ead.authuser.controllers;
 
+import com.ead.authuser.dtos.UserRecordDto;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.services.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +35,50 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Object> deleteUser(@PathVariable(name = "userId") UUID userId) {
+    public ResponseEntity<Object> deleteUser(@PathVariable UUID userId) {
         Optional<UserModel> optionalUserModel = userService.findById(userId);
         userService.delete(optionalUserModel.get());
         return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<Object> updateUser(@PathVariable UUID userId,
+                                             @RequestBody
+                                             @JsonView(UserRecordDto.UserView.UserPut.class)
+                                             UserRecordDto userRecordDto) {
+
+        var userModel = userService.findById(userId).get();
+        var result = userService.updateUser(userRecordDto, userModel);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PutMapping("/{userId}/password")
+    public ResponseEntity<Object> updatePassword(@PathVariable UUID userId,
+                                                 @RequestBody
+                                                 @JsonView(UserRecordDto.UserView.PasswordPut.class)
+                                                 UserRecordDto userRecordDto) {
+
+        Optional<UserModel> userModelOptional = userService.findById(userId);
+
+        if (!userModelOptional.get().getPassword().equals(userRecordDto.oldPassword())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Mismatched old password");
+        }
+
+        userService.updatePassword(userRecordDto, userModelOptional.get());
+
+        return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
+    }
+
+    @PutMapping("/{userId}/image")
+    public ResponseEntity<Object> updateImage(@PathVariable UUID userId,
+                                              @RequestBody
+                                              @JsonView(UserRecordDto.UserView.ImagePut.class)
+                                              UserRecordDto userRecordDto) {
+
+        var userModel = userService.findById(userId).get();
+        userService.updateImage(userRecordDto, userModel);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userModel);
     }
 }
