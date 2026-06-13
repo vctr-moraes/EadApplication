@@ -4,12 +4,13 @@ import com.ead.authuser.dtos.UserRecordDto;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,10 +24,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    // For pagination on method: @PageableDefault(page = 0, size = 2, sort = "userId", direction = Sort.Direction.ASC)
     @GetMapping
-    public ResponseEntity<List<UserModel>> getAllUsers() {
-        List<UserModel> userModels = userService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(userModels);
+    public ResponseEntity<Page<UserModel>> getAllUsers(Pageable pageable) {
+        Page<UserModel> userModelPage = userService.findAll(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(userModelPage);
     }
 
     @GetMapping("/{userId}")
