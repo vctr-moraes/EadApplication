@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface UserService {
 
     List<UserModel> findAll();
-    Page<UserModel> findAll(Pageable pageable);
+    Page<UserModel> findAll(Specification<UserModel> spec, Pageable pageable);
     Optional<UserModel> findById(UUID userId);
     void delete(UserModel userModel);
     UserModel registerUser(UserRecordDto userRecordDto);
