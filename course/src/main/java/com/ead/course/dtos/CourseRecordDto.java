@@ -23,5 +23,4 @@ public record CourseRecordDto(
     @NotNull
     UUID userInstructorId,
 
-    String imageUrl) {
-}
+    String imageUrl) { }
