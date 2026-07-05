@@ -28,8 +28,8 @@ public class ModuleController {
     public ResponseEntity<Object> saveModule(@PathVariable(value = "courseId") UUID courseId,
                                              @RequestBody @Valid ModuleRecordDto moduleRecordDto) {
 
-        var moduleModel = courseService.findById(courseId).get();
-        var newModule = moduleService.save(moduleRecordDto, moduleModel);
+        var courseModel = courseService.findById(courseId).get();
+        var newModule = moduleService.save(moduleRecordDto, courseModel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newModule);
     }

@@ -64,12 +64,23 @@ public class ModuleServiceImpl implements ModuleService {
             // throw an exception
         }
 
-        return  moduleModelOptional;
+        return moduleModelOptional;
     }
 
     @Override
     public ModuleModel update(ModuleRecordDto moduleRecordDto, ModuleModel moduleModel) {
         BeanUtils.copyProperties(moduleRecordDto, moduleModel);
         return moduleRepository.save(moduleModel);
+    }
+
+    @Override
+    public Optional<ModuleModel> findById(UUID moduleId) {
+        Optional<ModuleModel> moduleModelOptional = moduleRepository.findById(moduleId);
+
+        if (moduleModelOptional.isEmpty()) {
+            // throw an exception
+        }
+
+        return moduleModelOptional;
     }
 }

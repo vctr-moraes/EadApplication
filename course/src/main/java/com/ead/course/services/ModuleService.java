@@ -16,4 +16,5 @@ public interface ModuleService {
     List<ModuleModel> findAllModulesIntoCourse(UUID courseId);
     Optional<ModuleModel> findModuleIntoCourse(UUID courseId, UUID moduleId);
     ModuleModel update(ModuleRecordDto moduleRecordDto, ModuleModel moduleModel);
+    Optional<ModuleModel> findById(UUID moduleId);
 }
