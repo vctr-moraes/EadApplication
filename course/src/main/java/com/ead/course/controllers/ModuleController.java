@@ -42,8 +42,8 @@ public class ModuleController {
 
     @GetMapping("/courses/{courseId}/modules/{moduleId}")
     public ResponseEntity<Object> getOneModule(@PathVariable UUID courseId, @PathVariable UUID moduleId) {
-        var moduleModel = moduleService.findModuleIntoCourse(courseId, moduleId);
-        return ResponseEntity.status(HttpStatus.OK).body(moduleModel);
+        Optional<ModuleModel> moduleModel = moduleService.findModuleIntoCourse(courseId, moduleId);
+        return ResponseEntity.status(HttpStatus.OK).body(moduleModel.get());
     }
 
     @DeleteMapping("/courses/{courseId}/modules/{moduleId}")

@@ -1,17 +1,16 @@
 package com.ead.course.controllers;
 
 import com.ead.course.dtos.LessonRecordDto;
-import com.ead.course.models.ModuleModel;
+import com.ead.course.models.LessonModel;
 import com.ead.course.services.LessonService;
 import com.ead.course.services.ModuleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -33,5 +32,34 @@ public class LessonController {
         var newLesson = lessonService.save(lessonRecordDto, moduleModel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newLesson);
+    }
+
+    @GetMapping("/modules/{moduleId}/lessons")
+    public ResponseEntity<List<LessonModel>> getAllLessons(@PathVariable UUID moduleId) {
+        var lessons = lessonService.findAllLessonsIntoModule(moduleId);
+        return ResponseEntity.status(HttpStatus.OK).body(lessons);
+    }
+
+    @GetMapping("/modules/{moduleId}/lessons/{lessonId}")
+    public ResponseEntity<Object> getOneLesson(@PathVariable UUID moduleId, @PathVariable UUID lessonId) {
+        Optional<LessonModel> lessonModel = lessonService.findLessonIntoModule(moduleId, lessonId);
+        return ResponseEntity.status(HttpStatus.OK).body(lessonModel.get());
+    }
+
+    @DeleteMapping("/modules/{moduleId}/lessons/{lessonId}")
+    public ResponseEntity<Object> deleteLesson(@PathVariable UUID moduleId, @PathVariable UUID lessonId) {
+        Optional<LessonModel> lessonModelOptional = lessonService.findLessonIntoModule(moduleId, lessonId);
+        lessonService.delete(lessonModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Lesson deleted successfully");
+    }
+
+    @PutMapping("/modules/{moduleId}/lessons/{lessonId}")
+    public ResponseEntity<Object> updateLesson(@PathVariable UUID moduleId,
+                                               @PathVariable UUID lessonId,
+                                               @RequestBody @Valid LessonRecordDto lessonRecordDto) {
+
+        Optional<LessonModel> lessonModelOptional = lessonService.findLessonIntoModule(moduleId, lessonId);
+        var lessonUpdated = lessonService.update(lessonRecordDto, lessonModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body(lessonUpdated);
     }
 }
