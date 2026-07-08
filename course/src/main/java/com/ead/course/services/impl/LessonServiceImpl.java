@@ -1,15 +1,13 @@
 package com.ead.course.services.impl;
 
 import com.ead.course.dtos.LessonRecordDto;
+import com.ead.course.exceptions.NotFoundException;
 import com.ead.course.models.LessonModel;
 import com.ead.course.models.ModuleModel;
 import com.ead.course.repositories.LessonRepository;
 import com.ead.course.services.LessonService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,7 +46,7 @@ public class LessonServiceImpl implements LessonService {
         Optional<LessonModel> lessonModelOptional = lessonRepository.findLessonIntoModule(moduleId, lessonId);
 
         if (lessonModelOptional.isEmpty()) {
-            // throw an exception
+            throw new NotFoundException("Error: Lesson not found for this module");
         }
 
         return lessonModelOptional;
